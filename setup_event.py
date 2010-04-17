@@ -5,11 +5,11 @@ import urllib
 #import from appengine
 from google.appengine.api import urlfetch
 
-# import from local 
+# import from local
 from sms_gateway import ClickatellGateway
 from models import RegisteredVisitor
 
-class SMSMessage(object):
+class Event(object):
 	"""
 	Represents an sms message
 	"""
@@ -17,26 +17,26 @@ class SMSMessage(object):
 
 	def __init__(self):
 		'Constructor'
-		self.m_phone = None
-		self.m_body = None
-		
-	def set_body(self, body):
+		self.m_code = None
+		self.m_name = None
+		self.m_date = None
+		self.m_description = None
+
+	def set_code(self, code):
+		'Accessor for body'
+		self.m_code = code
+
+	def set_name(self, name):
+		'Accessor for phone number'
+		self.m_name = name
+
+	def set_date(self, body):
 		'Accessor for body'
 		self.m_body = body
 
-	def set_phone(self, phone):
+	def set_description(self, description):
 		'Accessor for phone number'
-		self.m_phone = phone
-
-	def get_hash(self):
-		'Accessor for the hash'
-		if self.m_phone == None or self.m_body == None:
-			raise AttributeError
-		else:
-			m = hashlib.sha1()
-			data = "#".join((self.m_phone, self.m_body))
-			m.update(data)
-			return m.hexdigest()
+		self.m_description = description
 
 	def confirm(self):
 		'Confirm receipt of the message. No default implementation.'
@@ -57,7 +57,7 @@ class IncomingSMSMessage(SMSMessage):
 	def __init__(self, phone, body):
 		''
 		self.set_phone(phone)
-		self.set_body(body)	
+		self.set_body(body)
 
 	def confirm(self):
 		'Use clickatell to confirm the message'
@@ -68,7 +68,7 @@ class IncomingSMSMessage(SMSMessage):
 	def save(self):
 		'Override so that we can also write to google docs'
 		SMSMessage.save(self)
-		self.googleDocIt()        
+		self.googleDocIt()
 
 	def get_confirmation_number(self):
 		'Return a digit number taken from the hash'
@@ -78,15 +78,15 @@ class IncomingSMSMessage(SMSMessage):
 			subhash = hash[3:10]
 		else:
 			subhash = hash
-		return subhash	
-			
+		return subhash
+
 	def googleDocIt(self):
 		'Save to google docs so that we can share with other mfa organizers'
 		form_fields = {
 			"formkey": "dHg3d0FuMTdJcVZCa1NDakRIQTBuVmc6MA..",
 			"entry.0.single": self.m_phone,
 			"entry.1.single": self.m_body,
-			"entry.2.single": self.get_confirmation_number(), 
+			"entry.2.single": self.get_confirmation_number(),
 			}
 		form_data = urllib.urlencode(form_fields)
 		url = "http://spreadsheets.google.com/formResponse"

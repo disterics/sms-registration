@@ -1,35 +1,17 @@
+import os
 from google.appengine.ext import webapp
 from sms_message import IncomingSMSMessage
+from google.appengine.ext.webapp import template
+from models import *
 
 class MainPage(webapp.RequestHandler):
 	"""
 	This is a debugging page that allows me to test how the code handles messages.
 	"""
 	def get(self):
-		self.response.out.write("""
-      <html>
-        <body>
-          <form action="/register" method="post">
-            <div>
-              <label for="entry_0">Phone Number </label>
-              <label for="entry_0">Phone number text came from </label>
-              <input id="entry_0" type="text" value="" name="phone"/>
-            </div>
-            <br />
-            <div>
-              <label for="entry_1">Body of SMS </label>
-              <label for="entry_1">body of sms </label>
-              <textarea id="entry_1" cols="75" rows="8" name="body"> 
-              </textarea>
-            </div>
-            <br />
-            <div>
-              <input type="submit" value="Submit"/>
-            </div>
-          </form>
-        </body>
-      </html>""")
-
+		template_values = {}
+		path = os.path.join(os.path.dirname(__file__), 'templates/registration.html')
+		self.response.out.write(template.render(path, template_values))
 
 class Register(webapp.RequestHandler):
 	"""
@@ -45,5 +27,28 @@ class Register(webapp.RequestHandler):
 		msg = IncomingSMSMessage(self.request.get('phone'), 
 							self.request.get('body'))
 		msg.confirm()
-		msg.save()
+		event = msg.save()
+		if msg:
+			template_values = {'event': event}
+			path = os.path.join(os.path.dirname(__file__), 'templates/notification.html')
+			self.response.out.write(template.render(path, template_values))
 
+class Event(webapp.RequestHandler):
+	"""
+	This is a debugging page that allows me to test how the code creates events.
+	"""
+	def get(self):
+		template_values = {}
+		path = os.path.join(os.path.dirname(__file__), 'templates/event.html')
+		self.response.out.write(template.render(path, template_values))
+
+class ListVisitors(webapp.RequestHandler):
+	"""
+	This is a debugging page that allows me to test how the code creates events.
+	"""
+	def get(self):
+		visitors = db.GqlQuery("SELECT * FROM RegisteredVisitor ORDER BY phone DESC LIMIT 10")
+		template_values = {'visitors': visitors}
+
+		path = os.path.join(os.path.dirname(__file__), 'templates/visitor_list.html')
+		self.response.out.write(template.render(path, template_values))

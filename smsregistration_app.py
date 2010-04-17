@@ -4,11 +4,13 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 #local imports
-from handlers import MainPage, Register
+from handlers import MainPage, Register, ListVisitors, Event
 
 application = webapp.WSGIApplication(
   [('/', MainPage), 
-   ('/register', Register)],
+   ('/register', Register),
+   ('/event/create', Event),
+   ('/event/list', ListVisitors)],
   debug=True)
 
 def main():
