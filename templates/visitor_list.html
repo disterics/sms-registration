@@ -1,0 +1,22 @@
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="stylesheets/style.css" />
+</head>
+<body>
+<h1>All visitors</h1>
+	<table>
+	<thead>
+		<td> Phone </td>
+		<td> Body </td>
+		<td> Date registered </td>
+	</thead>
+	{% for i in visitors %}
+		<tr>
+			<td> {{ i.phone }} </td>
+			<td> {{ i.body }} </td>
+			<td> {{ i.date|date:"l, M d Y" }} </td>
+		</tr>
+	{% endfor %}
+	</table>
+</body>
+</html>

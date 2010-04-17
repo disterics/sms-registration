@@ -1,0 +1,27 @@
+body {
+    background: #ebece4;
+}
+#heading {
+    margin-left: 40px;
+}
+
+#entry_0 {
+    margin-left: 40px;
+}
+#entry_1 {
+    margin-left: 60px;
+}
+#phone_eg {
+    position: relative;
+    left : 170px;
+    bottom : 20px;
+}
+#message_eg {
+    position: relative;
+    left: 170px;
+    bottom: 20px;
+}
+#label_1 {
+    /*position: relative;*/
+   /* bottom: 20px;*/
+}
