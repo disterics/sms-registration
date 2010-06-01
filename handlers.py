@@ -14,9 +14,19 @@ class MainPage(webapp.RequestHandler):
 		self.response.out.write(template.render(path, template_values))
 
 class Register(webapp.RequestHandler):
-	"""
-        Handles the form submission
-	"""
+    def post(self):
+        self.response.out.write('<html><body>You wrote:<pre>')
+        self.response.out.write(cgi.escape(self.request.get('content')))
+        self.response.out.write(cgi.escape(self.request.get('phone_no')))
+        self.response.out.write('</pre></body></html>')
+
+application = webapp.WSGIApplication(
+                                     [('/', MainPage),
+                                      ('/register', Register)],
+                                     debug=True)
+
+"""class Register(webapp.RequestHandler):
+#        Handles the form submission
 	debug = False
 	def get(self):
 		'Pass on get requests to the post handler.'
@@ -32,7 +42,7 @@ class Register(webapp.RequestHandler):
 			template_values = {'event': event}
 			path = os.path.join(os.path.dirname(__file__), 'templates/notification.html')
 			self.response.out.write(template.render(path, template_values))
-
+"""
 class Event(webapp.RequestHandler):
 	"""
 	This is a debugging page that allows me to test how the code creates events.
